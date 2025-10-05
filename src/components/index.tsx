@@ -35,9 +35,9 @@ export default function WeatherByCity() {
               weather
             </h1>
             <p className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-white/80 md:text-xl">
-              Experience weather like never before with real-time data,
-              beautiful visuals, and precise forecasts for any location
-              worldwide
+              Experience weather like never before with real-time updates,
+              stunning visualizations, and highly accurate forecasts tailored
+              for any location across the globe.
             </p>
             <div className="mb-10 flex justify-center">
               <SearchBar />
