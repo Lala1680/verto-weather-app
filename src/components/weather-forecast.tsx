@@ -5,6 +5,8 @@ import type { ForecastData } from '@/api/types';
 
 interface WeatherForecastProps {
   data: ForecastData;
+  unit: 'celsius' | 'fahrenheit';
+  convertTemp: (temp: number) => number;
 }
 
 interface DailyForecast {
@@ -20,8 +22,11 @@ interface DailyForecast {
   };
 }
 
-export function WeatherForecast({ data }: WeatherForecastProps) {
-  // Group forecast by day and get daily min/max
+export function WeatherForecast({
+  data,
+  unit,
+  convertTemp,
+}: WeatherForecastProps) {
   const dailyForecasts = data.list.reduce(
     (acc, forecast) => {
       const date = format(new Date(forecast.dt * 1000), 'yyyy-MM-dd');
@@ -50,11 +55,9 @@ export function WeatherForecast({ data }: WeatherForecastProps) {
     {} as Record<string, DailyForecast>
   );
 
-  // Get next 5 days
   const nextDays = Object.values(dailyForecasts).slice(1, 6);
-
-  // Format temperature
-  const formatTemp = (temp: number) => `${Math.round(temp)}°`;
+  const formatTemp = (t: number) => `${Math.round(convertTemp(t))}°`;
+  const getUnitSymbol = () => (unit === 'celsius' ? 'C' : 'F');
 
   return (
     <Card className="bg-white/40 !backdrop-blur-2xl">
@@ -86,13 +89,15 @@ export function WeatherForecast({ data }: WeatherForecastProps) {
               </div>
 
               <div className="flex gap-4 sm:justify-end">
-                <span className="flex items-center text-blue-500">
-                  <ArrowDown className="mr-1 h-4 w-4" />
-                  {formatTemp(day.temp_min)}
-                </span>
                 <span className="flex items-center text-red-500">
                   <ArrowUp className="mr-1 h-4 w-4" />
                   {formatTemp(day.temp_max)}
+                  <span className="text-xs">{getUnitSymbol()}</span>
+                </span>
+                <span className="flex items-center text-blue-500">
+                  <ArrowDown className="mr-1 h-4 w-4" />
+                  {formatTemp(day.temp_min)}
+                  <span className="text-xs">{getUnitSymbol()}</span>
                 </span>
                 <span className="flex items-center gap-1">
                   <Droplets className="h-4 w-4 text-blue-500" />

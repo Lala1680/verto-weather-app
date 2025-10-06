@@ -16,9 +16,15 @@ import { format } from 'date-fns';
 interface CurrentWeatherProps {
   data: WeatherData;
   locationName?: GeocodingResponse;
+  unit: 'celsius' | 'fahrenheit';
+  convertTemp: (temp: number) => number;
 }
 
-export function CurrentWeather({ data }: CurrentWeatherProps) {
+export function CurrentWeather({
+  data,
+  unit,
+  convertTemp,
+}: CurrentWeatherProps) {
   const {
     weather: [currentWeather],
     main: { temp, feels_like, temp_min, temp_max, humidity, pressure },
@@ -27,15 +33,12 @@ export function CurrentWeather({ data }: CurrentWeatherProps) {
     name,
   } = data;
 
-  // Format temperature
-  const formatTemp = (temp: number) => `${Math.round(temp)}°`;
+  const formatTemp = (t: number) => `${Math.round(convertTemp(t))}°`;
+  const getUnitSymbol = () => (unit === 'celsius' ? 'C' : 'F');
 
-  // Format time using date-fns
-  const formatTime = (timestamp: number) => {
-    return format(new Date(timestamp * 1000), 'h:mm a');
-  };
+  const formatTime = (timestamp: number) =>
+    format(new Date(timestamp * 1000), 'h:mm a');
 
-  // Convert wind degree to direction
   const getWindDirection = (degree: number) => {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const index =
@@ -98,21 +101,22 @@ export function CurrentWeather({ data }: CurrentWeatherProps) {
           <div className="flex justify-between">
             <div className="flex flex-col justify-center space-y-2 text-left">
               <p className="text-5xl font-bold tracking-tighter md:text-7xl">
-                {formatTemp(temp)} <span className="font-normal">c</span>
+                {formatTemp(temp)}{' '}
+                <span className="font-normal">{getUnitSymbol()}</span>
               </p>
               <p className="text-sm font-medium capitalize">
                 {currentWeather.description}
               </p>
               <div className="flex gap-2 text-sm font-medium">
                 High:
-                <span className="flex items-center gap-1 text-blue-500">
-                  <ArrowDown className="h-3 w-3" />
-                  {formatTemp(temp_min)}
-                </span>
-                Low:
                 <span className="flex items-center gap-1 text-red-500">
                   <ArrowUp className="h-3 w-3" />
                   {formatTemp(temp_max)}
+                </span>
+                Low:
+                <span className="flex items-center gap-1 text-blue-500">
+                  <ArrowDown className="h-3 w-3" />
+                  {formatTemp(temp_min)}
                 </span>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css';
 import WeatherByCity from './components';
 import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from './components/ui/sonner';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +20,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <WeatherByCity />
+        <Toaster richColors position="top-center" />
       </BrowserRouter>
     </QueryClientProvider>
   );
